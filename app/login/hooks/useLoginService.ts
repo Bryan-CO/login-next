@@ -8,6 +8,7 @@ export function useLoginService() {
         mutationFn: (data: CredentialsDTO) => loginForm(data),
         onSuccess: (res) => {
             Cookies.set('accessToken', res.accessToken)
+            window.location.replace('/box')
         },
         onError: (err) => {
             console.log(err)
@@ -17,6 +18,7 @@ export function useLoginService() {
         mutationFn: (data: TargetDTO) => loginTarget(data),
         onSuccess: (res) => {
             Cookies.set('accessToken', res.accessToken)
+            window.location.replace('/box')
         },
         onError: (err) => {
             console.log(err)

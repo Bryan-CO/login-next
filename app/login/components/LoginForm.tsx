@@ -13,9 +13,12 @@ import { fetchData } from "@/lib/fetchFunction";
 import { useLoginService } from "../hooks/useLoginService";
 import { useRouter  } from "next/navigation";
 import Cookies from "js-cookie";
+import AuthStore from "@/shared/store/authStore";
 
 
 export default function LoginForm() {
+    const { isLoggedIn} = AuthStore()
+    console.log(isLoggedIn)
     const { setTypeLogin } = loginStore()
     const { login } = useLoginService()
     const [loginError, setLoginError] = useState(false)
@@ -23,15 +26,20 @@ export default function LoginForm() {
         resolver: zodResolver(loginSchema),
     });
 
+    // useEffect(() => {
+    //     fetch('http://localhost:1230/cookie', {
+    //         credentials: 'include'
+    //     })
+    // }, [])
+
     const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-        // login.mutate(data, {
-        //     onError: () => setLoginError(true),
-        //     onSuccess: () => {
-        //         router.replace('/box')
-        //     }
-        // })
-        Cookies.set('accessToken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOjEsImlhdCI6MTczMzMzNDY3MywiZXhwIjoxNzMzMzM4MjczfQ.0BrQjD-x-z6Hgfq0HL0hJFY9MZuG-fydbEYEGLAp9X8')
-        window.location.replace('/box')
+        setLoginError(false)
+        login.mutate(data, {
+            onError: () => setLoginError(true),
+            onSuccess: () => {
+                // window.location.replace('/box')
+            }
+        })
     }
 
     return (
@@ -63,7 +71,7 @@ export default function LoginForm() {
                     {loginError && <span className="text-red">No se encuentra el usuario registrado</span>}
                 </div>
 
-                <Button className="text-xl h-12" type="submit" disabled={login.isPending}>
+                <Button className="text-xl h-12" type="submit" disabled={login.isPending || login.isSuccess}>
                     Iniciar sesión
                 </Button>
                 <Button variant="outline" className="text-xl h-12" onClick={() => setTypeLogin('target')}>

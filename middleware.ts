@@ -1,24 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+import { UserPayload } from "./app/login/types/auth";
 
 export function middleware(request: NextRequest) {
-    const token = request.cookies.get('accessToken')
-    console.log('TOKEN', token)
+    const token = request.cookies.get('accessToken');
+    console.log(token)
+    const payload = jwt.decode(token?.value ?? '') as UserPayload
     const currentPath = request.nextUrl.pathname;
-    if(!token){
-        console.log('ENTRE ACA OJO')
-    }
-    if(token)
-        console.log('SI HAY TOKEN')
+    // const payload = true
 
-    if (!token && currentPath !== '/login') {
-        console.log('ACAAAA')
-        return NextResponse.redirect(new URL('/login', request.url))
+    if (!payload && currentPath !== '/login') {
+        const response = NextResponse.redirect(new URL('/login', request.url))
+        // response.cookies.delete('accessToken')
+        return response
     }
     
-    if (token && currentPath === '/login') {
-        
-        console.log('Redirigiendo a /box desde login');
-        // Comprobamos que no estemos ya en /box antes de redirigir
+    if (payload && currentPath === '/login') {
         return NextResponse.redirect(new URL('/box', request.url));
 
     }
@@ -27,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/login', '/box', '/']
+    matcher: ['/login', '/box', '/sale', '/']
 }

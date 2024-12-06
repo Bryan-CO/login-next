@@ -15,3 +15,8 @@ export interface CredentialsDTO{
 export interface TargetDTO{
     cardNumber: string
 }
+
+export interface UserPayload{
+    id: number
+    username: string
+}

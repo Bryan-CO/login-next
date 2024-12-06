@@ -1,56 +1,42 @@
 import { create } from "zustand";
 import { use, useState } from 'react'
 import { useMutation } from "@tanstack/react-query";
+import { UserPayload } from "@/app/login/types/auth";
+import Cookies from "js-cookie";
 
 interface AuthStore {
-    login: (email: string, password: string) => Promise<void>;
+    initialCheck: () => void
     logout: () => void;
     isLoggedIn: boolean;
-    user: any;
+    user: UserPayload | null;
     showAuthModal: boolean;
     setShowAuthModal: (showAuthModal: boolean) => void;
 }
 
-const AuthStore = create<AuthStore>((set) => {
-    const login = useMutation({
-
-    })
-    // Estado inicial
-    return {
-        isLoggedIn: false,
-        user: null,
-
-        // Función de login
-        login: async (email, password) => {
-            try {
-                // Simula una llamada a una API
-                // const response = await fakeLoginApi(email, password);
-
-                // Actualiza el estado global con el usuario obtenido
-                set({
-                    isLoggedIn: true,
-                    user: '',
-                });
-
-                console.log('Login exitoso');
-            } catch (error) {
-                console.error('Error en el login:', error);
-                throw error; // Opcional: lanzar error para manejo en el componente
-            }
-        },
-
-        // Función de logout
-        logout: () => {
+const AuthStore = create<AuthStore>((set) => ({
+    initialCheck: () => {
+        const token = Cookies.get('accessToken')
+        if (token) {
             set({
-                isLoggedIn: false,
-                user: null,
+                isLoggedIn: true,
+                user: {
+                    id: 1,
+                    username: 'admin'
+                }
             });
+        }
+    },
+    logout: () => {
+        set({
+            isLoggedIn: false,
+            user: null,
+        });
+        Cookies.remove('accessToken');
+    },
+    isLoggedIn: false,
+    user: null,
+    showAuthModal: false,
+    setShowAuthModal: (showAuthModal) => set({ showAuthModal })
+}));
 
-            console.log('Logout exitoso');
-        },
-        showAuthModal: false,
-        setShowAuthModal: (showAuthModal) => set({ showAuthModal }),
-    }
-});
-
-// export default useAuthStore;
+export default AuthStore;
