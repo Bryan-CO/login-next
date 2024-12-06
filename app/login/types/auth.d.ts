@@ -11,3 +11,7 @@ export interface CredentialsDTO{
     username: string
     password: string
 }
+
+export interface TargetDTO{
+    cardNumber: string
+}

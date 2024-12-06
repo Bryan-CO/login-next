@@ -1,6 +1,13 @@
 import "@/shared/styles/globals.css";
 import { lato } from "./fonts";
 import UseQueryProvider from "@/shared/components/UseQueryProvider";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+  title: "Loyalty",
+  description: "Loyalty app",
+};
 
 export default function RootLayout({
   children,

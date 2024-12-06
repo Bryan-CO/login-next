@@ -11,13 +11,12 @@ import { z } from "zod";
 import { useEffect, useState } from "react";
 import { fetchData } from "@/lib/fetchFunction";
 import { useLoginService } from "../hooks/useLoginService";
-import { useRouter  } from "next/router";
-
+import { useRouter  } from "next/navigation";
+import Cookies from "js-cookie";
 
 
 export default function LoginForm() {
     const { setTypeLogin } = loginStore()
-    const router = useRouter()
     const { login } = useLoginService()
     const [loginError, setLoginError] = useState(false)
     const formLogin = useForm<z.infer<typeof loginSchema>>({
@@ -25,12 +24,14 @@ export default function LoginForm() {
     });
 
     const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-        login.mutate(data, {
-            onError: () => setLoginError(true),
-            onSuccess: () => {
-                router.push('/box', undefined, { shallow: true })
-            }
-        })
+        // login.mutate(data, {
+        //     onError: () => setLoginError(true),
+        //     onSuccess: () => {
+        //         router.replace('/box')
+        //     }
+        // })
+        Cookies.set('accessToken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOjEsImlhdCI6MTczMzMzNDY3MywiZXhwIjoxNzMzMzM4MjczfQ.0BrQjD-x-z6Hgfq0HL0hJFY9MZuG-fydbEYEGLAp9X8')
+        window.location.replace('/box')
     }
 
     return (

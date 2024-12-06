@@ -7,9 +7,11 @@ import ScanIcon from "./ScanIcon";
 import { useEffect, useRef, useState } from "react";
 import { poppins } from "@/app/fonts";
 import styles from './login-target.module.css'
+import { useLoginService } from "../hooks/useLoginService";
 
 export default function LoginTarget() {
     const { setTypeLogin } = loginStore()
+    const { loginWithTarget } = useLoginService()
     const targetRef = useRef<HTMLDivElement | null>(null)
     const targedId = useRef('')
     const [shake, setShake] = useState(false)
@@ -27,16 +29,21 @@ export default function LoginTarget() {
     }, [])
 
     const login = (target: string) => {
-        if(target !== '123'){
-            setShake(true)
-            setTimeout(() => {
-                setShake(false)
-            }, 300)
-            setLoginError(true)
-            return
-        }
-        alert('Login exitoso')
-        setLoginError(false)
+        loginWithTarget.mutate({
+            cardNumber: target
+        }, {
+            onError: () => {
+                shakeCard()
+                setLoginError(true)
+            }
+        })
+    }
+
+    const shakeCard = () =>{
+        setShake(true)
+        setTimeout(() => {
+            setShake(false)
+        }, 300)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
